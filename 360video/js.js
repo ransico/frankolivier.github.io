@@ -24,8 +24,6 @@ var fpsData = "";
 
 var previousVideoUploadTime = performance.now();
 
-var doVR = false;
-
 // Adds a string to the log in the web page
 function log(result) {
 	var resultDiv = document.getElementById("log");
@@ -513,14 +511,6 @@ function getVRDisplays() {
 		navigator.getVRDisplays().then(function (displays) {
 			if (displays.length > 0) {
 				vrDisplay = displays[0];
-
-				console.log('doVR = ' + doVR);
-
-				doVR = true;
-
-				console.log('doVR = ' + doVR);
-
-
 			}
 		})
 	}
