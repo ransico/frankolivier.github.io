@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8"> 
     <title>VR</title> 
 </head>
-<body>
+<body onload="enterVR()">
   
     <button onclick="enterVR()" style="display:block">Enter VR</button>
   
@@ -12,7 +12,7 @@
 
     <canvas id='webglcanvas' width='2880' height='1440' style="w idth:1px; d  isplay:none"></canvas>
 
-    <video id='sourcevideo' controls autoplay loop DELETEonplaying="onVideo()" style="display:none" />
+    <video id='sourcevideo' controls autoplay loop DELETEonplaying="onVideo()" style="display:none" >
       <source src="video.mp4" type="video/mp4">
       <source src="video.ogg" type="video/ogg">
     </video>
