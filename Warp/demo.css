@@ -1,0 +1,68 @@
+﻿/* Prevent text selection from being displayed when the user drags out of the canvas */
+*::selection {
+    background:transparent;
+}
+
+#DemoTitle {
+	padding-top:0px;
+}
+
+#DemoContent {
+	margin-top:10px;
+}
+
+#DemoContent {
+    width:600px;
+    margin-left:auto;
+    margin-right:auto;
+	margin-top:10px;
+}
+
+#DemoDetails {
+	margin-top:10px;
+    margin-bottom:10px;
+    background-color:lightgray;
+    padding:20px;
+    border-radius:4px;
+}
+
+body {
+     -ms-user-select: none;
+     font-size: 12pt;
+}
+
+canvas {
+    -ms-touch-action: none;
+}
+
+button {
+    padding:10px;
+    margin:10px;
+}
+
+input {
+    margin:8px;
+}
+
+
+.heading
+{
+    font-size: 20pt;
+    font-weight: normal;
+    color: #00a3ef;
+}
+
+
+#DemoIntroduction {
+    position:absolute;
+    top:100px;
+    left:20%;
+    right:20%;
+    background-color:lightcoral;
+
+    padding:20px;
+    border-radius:4px;
+
+}
+
+

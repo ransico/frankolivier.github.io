@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"> 
+    <title>Skew</title> 
+</head>
+<body style="background-color:red">
+
+    <canvas id='inputcanvas' width='600' height='600'></canvas>
+    <canvas id='webglcanvas' width='600' height='600'></canvas>
+
+
+    <div id="log"></div>
+
+
+	<script type="text/javascript" src="fourcorners.js"></script>
+	<script type="text/javascript" src="demo.js"></script>
+
+
+	<!-- vertex shader -->
+<script id="2d-vertex-shader" type="x-shader/x-vertex">
+attribute vec2 a_texCoord;  // coordinates for the texture 
+                            // (top left, top right, bottom left, bottom right)
+
+varying vec2 v_texCoord;    // pass this on to the fragment shader
+
+void main() {
+    v_texCoord = a_texCoord; // Set the texture coord to use
+
+    vec2 position = a_texCoord * 2.0 - 1.0; // Translate [0 ... 1] to [-1 ... 1] 
+
+    gl_Position = vec4(position, 0.0, 1.0); // x y z w  	
+}
+
+</script>
+
+
+<!-- fragment shader -->
+<script id="2d-fragment-shader" type="x-shader/x-fragment">
+precision mediump float;
+
+uniform sampler2D u_image;
+
+uniform vec2 topLeft;
+uniform vec2 topRight;
+uniform vec2 bottomRight;
+uniform vec2 bottomLeft;
+
+varying vec2 v_texCoord;
+
+void main() {
+
+    //gl_FragColor = texture2D(u_image, v_texCoord);
+
+
+    vec2 left = mix(bottomLeft, topLeft, v_texCoord.y);
+    vec2 right = mix(bottomRight, topRight, v_texCoord.y);
+
+    vec2 position = mix(left, right, v_texCoord.x);
+
+    vec4 color  = texture2D(u_image, position);
+
+    float f = (color.r + color.g + color.b) / 3.0;
+
+    //f = floor(f * 25.0) / 25.0;
+
+    gl_FragColor = vec4(f, f, f, 1.0);
+    //gl_FragColor = texture2D(u_image, position);
+    
+}
+</script>
+
+
+
+</body>
+</html>
