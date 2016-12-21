@@ -2,16 +2,6 @@
 
 window.onload = main;	// Startup
 
-// Point object (-1 to 1 range)
-function Point(x, y) {			//bugbug move to util class file?
-    if (x<-1) x = -1;
-    if (y<-1) y = -1;
-    if (x>1) x = 1;
-    if (y>1) y = 1;
-    
-    this.x = x;
-	this.y = y;
-}
 
 
 
@@ -247,6 +237,11 @@ var renderer = new function() {
 
 	}
 
+	// The aspect ratio of the rendered bitmap
+	this.renderWidth = 1;
+	this.renderHeight = 1;
+
+
 	this.updateCorners = function(corners) {
 		//console.log("! " + corners.topLeft.x + " " + corners.topLeft.y + " " + corners.topRight.x + " " + corners.topRight.y);
 
@@ -255,6 +250,15 @@ var renderer = new function() {
 		this.gl.uniform2f(this.pictureprogram.bottomRight, corners.bottomRight.x, corners.bottomRight.y);
 		this.gl.uniform2f(this.pictureprogram.bottomLeft, corners.bottomLeft.x, corners.bottomLeft.y);
 		this.render();
+
+
+		
+		
+	
+		// take the average of the two sides
+		this.renderWidth = (corners.topLeft.distanceFrom(corners.topRight) + corners.bottomLeft.distanceFrom(corners.bottomRight)) / 2;
+		this.renderHeight = (corners.topLeft.distanceFrom(corners.bottomLeft) + corners.topRight.distanceFrom(corners.bottomRight)) / 2;
+
 
 	}.bind(this)
 
@@ -271,6 +275,15 @@ var renderer = new function() {
 
 
 		program = this.pictureprogram;
+
+		// Set the viewport we shoudl draw into
+		
+		var middleX = gl.viewportWidth / 2;
+		var middleY = gl.viewportHeight / 2;
+		var offsetX = (this.renderWidth * gl.viewportWidth);
+		var offsetY = (this.renderHeight * gl.viewportHeight);
+
+		gl.viewport(middleX - offsetX / 2, middleY - offsetY / 2, offsetX, offsetY);
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer);
 		

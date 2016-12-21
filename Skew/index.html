@@ -12,7 +12,7 @@
 
     <div id="log"></div>
 
-
+    <script type="text/javascript" src="point.js"></script>
 	<script type="text/javascript" src="fourcorners.js"></script>
 	<script type="text/javascript" src="demo.js"></script>
 
@@ -60,12 +60,12 @@ void main() {
 
     vec4 color  = texture2D(u_image, position);
 
-    float f = (color.r + color.g + color.b) / 3.0;
+    //float f = (color.r + color.g + color.b) / 3.0;
 
     //f = floor(f * 25.0) / 25.0;
 
-    gl_FragColor = vec4(f, f, f, 1.0);
-    //gl_FragColor = texture2D(u_image, position);
+    //gl_FragColor = vec4(f, f, f, 1.0);
+    gl_FragColor = texture2D(u_image, position);
     
 }
 </script>

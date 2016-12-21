@@ -8,25 +8,6 @@ var cornerUI = new function() {
 
     var self = this;
 
-	// Point object (-1 to 1 range)
-	this.Point = function(x, y) {
-		if (x<-1) x = -1;
-		if (y<-1) y = -1;
-		if (x>1) x = 1;
-		if (y>1) y = 1;
-		
-		this.x = x;
-		this.y = y;
-
-		this.distanceFrom = function(x, y)
-		{
-			var value = Math.sqrt(Math.pow(x - this.x, 2) + Math.pow(y - this.y, 2)) 
-
-			/// bugbug delete //console.log(this.x + " " + this.y + " to " + x + " " + y + " = " + value );
-
-			return value; 
-		}
-	}
 
 	// getMousePoint
 	// in - mouse event e
@@ -54,7 +35,7 @@ var cornerUI = new function() {
 		x = (x / self.picturecanvas.width);
 		y = (1 - (y / self.picturecanvas.height));
 		
-		return new self.Point(x, y);
+		return new Point(x, y);
 	}
 
 /*
@@ -63,10 +44,10 @@ var cornerUI = new function() {
 	this.bottomRight = new this.Point(0.631,0);
 	this.bottomLeft = new this.Point(0.046,0);
 */
-	this.topLeft = new this.Point(0, 1);
-	this.topRight = new this.Point(1, 1);
-	this.bottomRight = new this.Point(1,0);
-	this.bottomLeft = new this.Point(0,0);
+	this.topLeft = new Point(0, 1);
+	this.topRight = new Point(1, 1);
+	this.bottomRight = new Point(1,0);
+	this.bottomLeft = new Point(0,0);
     this.activePoint = undefined;
 
 	this.updateX = function(downpoint)
@@ -83,38 +64,44 @@ var cornerUI = new function() {
 			var downpoint = self.getMousePoint(e);
 			//console.log(downpoint.x + " DOWN " + downpoint.y);
 
-			self.topLeft.originX = 0;
-			self.topLeft.originY = 1;
-			self.topRight.originX = 1;
-			self.topRight.originY = 1;
-			self.bottomRight.originX = 1;
-			self.bottomRight.originY = 0;
-			self.bottomLeft.originX = 0;
-			self.bottomLeft.originY = 0;
-
 			// find the closest corner, and the closest point
 
-			//var corners = [new Point(-1, 1), new Point(1, 1), new Point(1, -1), new Point(-1, -1)];
-			var points = [self.topLeft, self.topRight, self.bottomRight, self.bottomLeft];			
+			var topLeftCorner = new Point(0, 1);
+			var topRightCorner = new Point(1, 1);
+			var bottomRightCorner = new Point(1,0);
+			var bottomLeftCorner = new Point(0,0);
+
+			var corners = [topLeftCorner, topRightCorner, bottomRightCorner, bottomLeftCorner];			
+			var activePoints = [self.topLeft, self.topRight, self.bottomRight, self.bottomLeft];
 			
+			var smallestDistance = 9999999999;	// More than the max possible distance in a 2 * 2 square
 
-			var smallestDistance = 3;	// More than the max possible distance in a 2 * 2 square
+			for (var i = 0; i < 4; i++)
+			{
+				var corner = corners[i];
+				var distance = downpoint.distanceFrom(corner);
 
-			points.forEach(
-				function(point)
+				//console.log(distance + " DISTANCE " + smallestDistance);
+
+				if (distance < smallestDistance)
 				{
-					var distance = downpoint.distanceFrom(point.originX, point.originY);
+					self.activePoint = activePoints[i];
+					smallestDistance = distance;
+				}
 
-					//console.log(distance + " DISTANCE " + smallestDistance);
+			}
 
-					if (distance < smallestDistance)
-					{
-						self.activePoint = point;
-						smallestDistance = distance;
-					}
+			/*
+			corners.forEach(
+				function(corner)
+				{
+
+
+
 
 				}
 			);
+			*/
 
 			if (self.activePoint == self.topLeft) console.log("TOPLEFT");
 			if (self.activePoint == self.topRight) console.log("TOPRIGHT");
