@@ -6,13 +6,21 @@
 
     <link href="..\global.css" rel="stylesheet"> 
 </head>
+
+<style>
+canvas {
+  width: calc(100% + 16px);
+  margin-left: -8px;
+  margin-right: -8px;
+}
+</style>
+
+
 <body>
     <h1>360&deg; WebVR Video Test</h1>
     <button onclick="enterVR()" style="display:block">Enter VR</button>
   
-
-
-    <canvas id='webglcanvas' width='1000' height='500' swidth='2880' sheight='1440' style="width:100%; d  isplay:none"></canvas>
+    <canvas id='webglcanvas' width='1000' height='500' swidth='2880' sheight='1440' ></canvas>
 
     <video id='sourcevideo' controls autoplay loop style=" display:none" />
       <source src="video.mp4" type="video/mp4">
