@@ -510,9 +510,7 @@ function getVRDisplays() {
 }
 
 function enterVR() {
-
-	event.target.style = 'display:none';
-
+	
 	canvas = document.getElementById('webglcanvas');
 	//gl = canvas.getContext('experimental-webgl');
 	gl = canvas.getContext("experimental-webgl", {
