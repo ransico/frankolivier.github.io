@@ -35,6 +35,11 @@ var VRDisplay = function()
     	
     }
 
+    this.resetPose = function()
+    {
+    	
+    }
+
 }
 
 var FakeWebVR = new function(){

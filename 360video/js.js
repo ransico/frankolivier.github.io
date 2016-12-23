@@ -279,6 +279,8 @@ function init() {
 		frameData = new VRFrameData();
 	}
 
+	vrDisplay.resetPose();
+
 }
 
 function setMat4(id, a, b) {
