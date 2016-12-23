@@ -26,7 +26,7 @@ var previousVideoUploadTime = null;
 
 var logstring = "";
 
-const numberOfFramesToSample = 12;
+const numberOfFramesToSample = 1200;
 var frameTimes = [numberOfFramesToSample];
 
 // Adds a string to the log in the web page
@@ -399,6 +399,7 @@ function onVRFrame() {
 		rightVM = frameData.rightViewMatrix;
 	}
 
+		var d = 2;
 		logstring += (frameData.leftViewMatrix[0].toFixed(d) + " " 
 					  + frameData.leftViewMatrix[1].toFixed(d) + " " 
 					  + frameData.leftViewMatrix[2].toFixed(d) + " "
@@ -440,7 +441,6 @@ function onVRFrame() {
 	drawGeometry();
 
 
-		var d = 2;
 	
 
 
