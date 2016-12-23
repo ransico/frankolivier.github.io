@@ -24,6 +24,8 @@ var fpsData = "";
 
 var previousVideoUploadTime = null;
 
+var logstring = "";
+
 const numberOfFramesToSample = 12;
 var frameTimes = [numberOfFramesToSample];
 
@@ -397,6 +399,23 @@ function onVRFrame() {
 		rightVM = frameData.rightViewMatrix;
 	}
 
+		logstring += (frameData.leftViewMatrix[0].toFixed(d) + " " 
+					  + frameData.leftViewMatrix[1].toFixed(d) + " " 
+					  + frameData.leftViewMatrix[2].toFixed(d) + " "
+					  + frameData.leftViewMatrix[3].toFixed(d)) + "  "
+					  + (frameData.leftViewMatrix[4].toFixed(d) + " " 
+					  + frameData.leftViewMatrix[5].toFixed(d) + " " 
+					  + frameData.leftViewMatrix[6].toFixed(d) + " "
+					  + frameData.leftViewMatrix[7].toFixed(d)) + "  "
+					  + frameData.leftViewMatrix[8].toFixed(d) + " " 
+					  + frameData.leftViewMatrix[9].toFixed(d) + " " 
+					  + frameData.leftViewMatrix[10].toFixed(d) + " "
+					  + frameData.leftViewMatrix[11].toFixed(d) + "  "
+					  + frameData.leftViewMatrix[12].toFixed(d) + " " 
+					  + frameData.leftViewMatrix[13].toFixed(d) + " " 
+					  + frameData.leftViewMatrix[14].toFixed(d) + " "
+					  + frameData.leftViewMatrix[15].toFixed(d) + "</br>";
+
 	// The video cube effect only works is the eye location is 0,0,0
 	// Change the model view matrix to move the eye perspective to 0,0,0
 	leftVM[12] = 0;
@@ -423,22 +442,7 @@ function onVRFrame() {
 
 		var d = 2;
 	
-		console.log((frameData.leftViewMatrix[0].toFixed(d) + " " 
-					  + frameData.leftViewMatrix[1].toFixed(d) + " " 
-					  + frameData.leftViewMatrix[2].toFixed(d) + " "
-					  + frameData.leftViewMatrix[3].toFixed(d)) + "  "
-					  + (frameData.leftViewMatrix[4].toFixed(d) + " " 
-					  + frameData.leftViewMatrix[5].toFixed(d) + " " 
-					  + frameData.leftViewMatrix[6].toFixed(d) + " "
-					  + frameData.leftViewMatrix[7].toFixed(d)) + "  "
-					  + frameData.leftViewMatrix[8].toFixed(d) + " " 
-					  + frameData.leftViewMatrix[9].toFixed(d) + " " 
-					  + frameData.leftViewMatrix[10].toFixed(d) + " "
-					  + frameData.leftViewMatrix[11].toFixed(d) + "  "
-					  + frameData.leftViewMatrix[12].toFixed(d) + " " 
-					  + frameData.leftViewMatrix[13].toFixed(d) + " " 
-					  + frameData.leftViewMatrix[14].toFixed(d) + " "
-					  + frameData.leftViewMatrix[15].toFixed(d));
+
 
 					  
 
@@ -477,7 +481,7 @@ function onVRFrame() {
 		}
 
 
-		if (frameCounter == 1000) debugger;
+		if (frameCounter == numberOfFramesToSample) log(logstring);
 			
 		
 
