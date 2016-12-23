@@ -22,7 +22,10 @@ var frameCounter = 0;
 
 var fpsData = "";
 
-var previousVideoUploadTime = performance.now();
+var previousVideoUploadTime = null;
+
+const numberOfFramesToSample = 12;
+var frameTimes = [numberOfFramesToSample];
 
 // Adds a string to the log in the web page
 function log(result) {
@@ -279,7 +282,7 @@ function init() {
 		frameData = new VRFrameData();
 	}
 
-	vrDisplay.resetPose();
+	//vrDisplay.resetPose();
 
 }
 
@@ -348,7 +351,7 @@ function onVRFrame() {
 	if (true === doVideo) {
 		var thisVideoUploadTime = t0;
 
-		if (thisVideoUploadTime - previousVideoUploadTime > 33.33333) // aka 30fps (1000ms / 30 fps)
+		if ((previousVideoUploadTime == null) || (thisVideoUploadTime - previousVideoUploadTime > 33.33333)) // aka 30fps (1000ms / 30 fps)
 		{
 			gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, videoElement);
 			//gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 1024, 1024, gl.RGBA, gl.UNSIGNED_BYTE, videoElement);
@@ -394,7 +397,8 @@ function onVRFrame() {
 		rightVM = frameData.rightViewMatrix;
 	}
 
-	// Center
+	// The video cube effect only works is the eye location is 0,0,0
+	// Change the model view matrix to move the eye perspective to 0,0,0
 	leftVM[12] = 0;
 	leftVM[13] = 0;
 	leftVM[14] = 0;
@@ -402,56 +406,6 @@ function onVRFrame() {
 	rightVM[12] = 0;
 	rightVM[13] = 0;
 	rightVM[14] = 0;
-
-	/*
-		var log = document.getElementById('log');
-	
-		var d = 2;
-	
-		log.innerHTML = (frameData.leftViewMatrix[0].toFixed(d) + " " 
-					  + frameData.leftViewMatrix[1].toFixed(d) + " " 
-					  + frameData.leftViewMatrix[2].toFixed(d) + " "
-					  + frameData.leftViewMatrix[3].toFixed(d)) +
-					  + " | "
-					  + (frameData.leftViewMatrix[4].toFixed(d) + " " 
-					  + frameData.leftViewMatrix[5].toFixed(d) + " " 
-					  + frameData.leftViewMatrix[6].toFixed(d) + " "
-					  + frameData.leftViewMatrix[7].toFixed(d)) +
-					  + " | "
-					  + frameData.leftViewMatrix[8].toFixed(d) + " " 
-					  + frameData.leftViewMatrix[9].toFixed(d) + " " 
-					  + frameData.leftViewMatrix[10].toFixed(d) + " "
-					  + frameData.leftViewMatrix[11].toFixed(d) +
-					  + " | "
-					  + frameData.leftViewMatrix[12].toFixed(d) + " " 
-					  + frameData.leftViewMatrix[13].toFixed(d) + " " 
-					  + frameData.leftViewMatrix[14].toFixed(d) + " "
-					  + frameData.leftViewMatrix[15].toFixed(d); */
-
-	/*
-    if (navigator.getVRDisplays)
-	{
-
-		setMat4('uPMatrix', false, frameData.leftProjectionMatrix);
-		setMat4('uMVMatrix', false, frameData.leftViewMatrix);
-	}
-	else
-	{
-
-	}
-*/
-
-	/*
-		  setMat4('uPMatrix', false, new Float32Array([1, 0, 0, 0,
-														0, 1, 0, 0,
-															0, 0, 1, 0,
-													0, 0, 0, 1]));
-  
-		  setMat4('uMVMatrix', false, new Float32Array([1, 0, 0, 0,
-														0, 1, 0, 0,
-															0, 0, 1, 0,
-													0, 0, 0, 1]));	
-													*/
 
 	// Render to the left eye’s view to the left half of the canvas
 	gl.viewport(0, 0, canvas.width * 0.5, canvas.height);
@@ -467,6 +421,27 @@ function onVRFrame() {
 	drawGeometry();
 
 
+		var d = 2;
+	
+		console.log((frameData.leftViewMatrix[0].toFixed(d) + " " 
+					  + frameData.leftViewMatrix[1].toFixed(d) + " " 
+					  + frameData.leftViewMatrix[2].toFixed(d) + " "
+					  + frameData.leftViewMatrix[3].toFixed(d)) + "  "
+					  + (frameData.leftViewMatrix[4].toFixed(d) + " " 
+					  + frameData.leftViewMatrix[5].toFixed(d) + " " 
+					  + frameData.leftViewMatrix[6].toFixed(d) + " "
+					  + frameData.leftViewMatrix[7].toFixed(d)) + "  "
+					  + frameData.leftViewMatrix[8].toFixed(d) + " " 
+					  + frameData.leftViewMatrix[9].toFixed(d) + " " 
+					  + frameData.leftViewMatrix[10].toFixed(d) + " "
+					  + frameData.leftViewMatrix[11].toFixed(d) + "  "
+					  + frameData.leftViewMatrix[12].toFixed(d) + " " 
+					  + frameData.leftViewMatrix[13].toFixed(d) + " " 
+					  + frameData.leftViewMatrix[14].toFixed(d) + " "
+					  + frameData.leftViewMatrix[15].toFixed(d));
+
+					  
+
 	// Indicate that we are ready to present the rendered frame to the VRDisplay
 	//bugbug vrDisplay.submitFrame();
 	//window.requestAnimationFrame(onFrame);
@@ -478,10 +453,13 @@ function onVRFrame() {
 
 	var t = (t1 - t0).toFixed(4);
 
-
-
 	frameCounter++;
-	if (frameCounter <= 1000) {
+
+	//console.log(frameCounter + " " + numberOfFramesToSample + " " + t);
+
+	if (frameCounter <= numberOfFramesToSample) {
+
+		frameTimes[frameCounter] = t;
 
 		if (uploaded == true) {
 			fpsData += (t + '*<br />');
@@ -490,7 +468,19 @@ function onVRFrame() {
 			fpsData += (t + '<br />');
 		}
 
-		if (frameCounter == 1000) log(fpsData);
+		if (frameCounter == numberOfFramesToSample) { //log(fpsData);
+			
+			//frameTimes.forEach(log);	
+
+			
+			
+		}
+
+
+		if (frameCounter == 1000) debugger;
+			
+		
+
 	}
 
 }
