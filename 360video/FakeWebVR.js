@@ -1,3 +1,6 @@
+// Polyfill for the WebVR 1.1 API
+// https://w3c.github.io/webvr/
+
 if (typeof VRFrameData === 'undefined')
 {
    var VRFrameData = function(){
