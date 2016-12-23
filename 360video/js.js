@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 
 window.onload = getVRDisplays;
 
@@ -505,8 +505,10 @@ function getVRDisplays() {
 		})
 	}
 	else {
-		// no VRDisplay
+		// no VRDisplay, fake items
+		vrDisplay = FakeWebVR.getVRDisplay();
 	}
+
 }
 
 function enterVR() {
