@@ -7,7 +7,6 @@ var gl;
 var program;
 var vertexBuffer;
 var indicesBuffer;
-
 var textureCoordsBuffer;
 
 var vrDisplay = null;
@@ -125,12 +124,10 @@ function getBuffer(data, shaderName, itemSize) {
 
 function init() {
 
-
 	gl.viewport(0, 0, canvas.width, canvas.height);
 
-
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
-	gl.enable(gl.DEPTH_TEST);
+	//gl.enable(gl.DEPTH_TEST);
 
 	// Shaders
 	var vertexShader = getShader(gl, 'vertex-shader');
@@ -237,9 +234,7 @@ function init() {
 
 	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array([0, 2, 1, 0, 3, 2, 4, 6, 5, 4, 7, 6, 8, 10, 9, 8, 11, 10, 12, 14, 13, 12, 15, 14, 16, 18, 17, 16, 19, 18, 20, 22, 21, 20, 23, 22]), gl.STATIC_DRAW);
 
-
 	// Video texture
-
 	videoTexture = gl.createTexture();
 	gl.bindTexture(gl.TEXTURE_2D, videoTexture);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
@@ -262,9 +257,6 @@ function init() {
 	//gl.bindTexture(gl.TEXTURE_2D, null);
 
 
-
-
-
 	if (true === doVideo) {
 		videoElement = document.getElementById('sourcevideo');
 		gl.bindTexture(gl.TEXTURE_2D, videoTexture);
@@ -278,57 +270,20 @@ function init() {
 	}
 
 
-	if (vrDisplay == null) {
-	}
-	else {
-		frameData = new VRFrameData();
-	}
-
-	//vrDisplay.resetPose();
+	frameData = new VRFrameData();
 
 }
 
 function setMat4(id, a, b) {
 	var location = gl.getUniformLocation(program, id);
 	if (location == null) {
-		alert('LOCATION NULL'); ///TODO
+		console.log('Shader location not found');
 	}
 
 	gl.uniformMatrix4fv(location, a, b);
 }
 
 function drawGeometry() {
-	// /gl.clearColor(1.0, 0.5, 0.5, 0.5);
-
-
-	/*	
-		setMat4('uPMatrix', false, new Float32Array([0.866, 0.0, 0.0, 0.0,
-									0.0, 1.732, 0.0, 0.0,
-									 0.0, 0.0, -1.0, -1.0,
-									  0.0, 0.0, 0.2, 0.0]));
-	*/
-	/*
-		setMat4('uMVMatrix', false, new Float32Array([-0.08, 0.09, -0.99, 0,
-									  0, 0.995, 0.099, 0,
-									   0.99, 0.008, -0.08, 0,
-										0, 0, 0, 1]));
-	*/
-	/*
-	 setMat4('uMVMatrix', false, new Float32Array([1, 0, 0, 0,
-													   0, 1, 0, 0,
-														   0, 0, 1, 0,
-												   0, 0, 0, 1]));
- */
-	/*
-	
-	
-	*/
-
-
-
-
-	//bugbug only do this sample once
-
 
 	gl.drawElements(gl.TRIANGLES, indicesBuffer.count, gl.UNSIGNED_SHORT, 0);
 
@@ -338,12 +293,7 @@ function onVRFrame() {
 
 	var t0 = performance.now();
 
-	if (vrDisplay == null) {
-		window.requestAnimationFrame(onVRFrame);
-	}
-	else {
-		vrDisplay.requestAnimationFrame(onVRFrame);
-	}
+	vrDisplay.requestAnimationFrame(onVRFrame);
 
 	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -374,51 +324,16 @@ function onVRFrame() {
 	var rightPM;
 	var rightVM;
 
-	if (vrDisplay == null) {
-		/*
-		leftPM = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-		leftVM = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-		rightPM = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-		rightVM = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
-		*/
+	vrDisplay.getFrameData(frameData);
 
-		leftPM = [0.757, 0.000, 0.000, 0.000, 0.000, 0.681, 0.000, 0.000, -0.056, -0.002, -1.000, -1.000, 0.000, 0.000, -0.020, 0.000];
-		leftVM = [0.938, -0.191, -0.288, 0.000, 0.215, 0.975, 0.052, 0.000, 0.271, -0.111, 0.956, 0.000, 0.667, -0.028, -0.361, 1.000];
-		rightPM = [0.757, 0.000, 0.000, 0.000, 0.000, 0.682, 0.000, 0.000, 0.056, 0.005, -1.000, -1.000, 0.000, 0.000, -0.020, 0.000];
-		rightVM = [0.938, -0.191, -0.288, 0.000, 0.215, 0.975, 0.052, 0.000, 0.271, -0.111, 0.956, 0.000, 0.603, -0.028, -0.361, 1.000];
-
-	}
-	else {
-		vrDisplay.getFrameData(frameData);
-
-
-
-		leftPM = frameData.leftProjectionMatrix;
-		leftVM = frameData.leftViewMatrix;
-		rightPM = frameData.rightProjectionMatrix;
-		rightVM = frameData.rightViewMatrix;
-	}
-
-		var d = 2;
-		logstring += (frameData.leftViewMatrix[0].toFixed(d) + " " 
-					  + frameData.leftViewMatrix[1].toFixed(d) + " " 
-					  + frameData.leftViewMatrix[2].toFixed(d) + " "
-					  + frameData.leftViewMatrix[3].toFixed(d)) + "  "
-					  + (frameData.leftViewMatrix[4].toFixed(d) + " " 
-					  + frameData.leftViewMatrix[5].toFixed(d) + " " 
-					  + frameData.leftViewMatrix[6].toFixed(d) + " "
-					  + frameData.leftViewMatrix[7].toFixed(d)) + "  "
-					  + frameData.leftViewMatrix[8].toFixed(d) + " " 
-					  + frameData.leftViewMatrix[9].toFixed(d) + " " 
-					  + frameData.leftViewMatrix[10].toFixed(d) + " "
-					  + frameData.leftViewMatrix[11].toFixed(d) + "  "
-					  + frameData.leftViewMatrix[12].toFixed(d) + " " 
-					  + frameData.leftViewMatrix[13].toFixed(d) + " " 
-					  + frameData.leftViewMatrix[14].toFixed(d) + " "
-					  + frameData.leftViewMatrix[15].toFixed(d) + "</br>";
+	leftPM = frameData.leftProjectionMatrix;
+	leftVM = frameData.leftViewMatrix;
+	rightPM = frameData.rightProjectionMatrix;
+	rightVM = frameData.rightViewMatrix;
 
 	// The video cube effect only works is the eye location is 0,0,0
 	// Change the model view matrix to move the eye perspective to 0,0,0
+
 	leftVM[12] = 0;
 	leftVM[13] = 0;
 	leftVM[14] = 0;
@@ -441,17 +356,9 @@ function onVRFrame() {
 	drawGeometry();
 
 
-	
-
-
-					  
-
 	// Indicate that we are ready to present the rendered frame to the VRDisplay
 	//bugbug vrDisplay.submitFrame();
-	//window.requestAnimationFrame(onFrame);
-	if (vrDisplay != null) {
-		vrDisplay.submitFrame();
-	}
+	vrDisplay.submitFrame();
 
 	var t1 = performance.now();
 
@@ -473,17 +380,17 @@ function onVRFrame() {
 		}
 
 		if (frameCounter == numberOfFramesToSample) { //log(fpsData);
-			
+
 			//frameTimes.forEach(log);	
 
-			
-			
+
+
 		}
 
 
 		if (frameCounter == numberOfFramesToSample) log(logstring);
-			
-		
+
+
 
 	}
 
@@ -508,7 +415,7 @@ function getVRDisplays() {
 }
 
 function enterVR() {
-	
+
 	canvas = document.getElementById('webglcanvas');
 	//gl = canvas.getContext('experimental-webgl');
 	gl = canvas.getContext("experimental-webgl", {
@@ -520,19 +427,10 @@ function enterVR() {
 		premultipliedAlpha: true
 	});
 
-
-
-
-	if (vrDisplay == null) {
+	vrDisplay.requestPresent([{ source: canvas }]).then(function () {
 		init();
-		window.requestAnimationFrame(onVRFrame);
-	}
-	else {
-		vrDisplay.requestPresent([{ source: canvas }]).then(function () {
-			init();
-			vrDisplay.requestAnimationFrame(onVRFrame);
-		});
-	}
+		vrDisplay.requestAnimationFrame(onVRFrame);
+	});
 
 
 	// Begin presentation (must be called within a user gesture)

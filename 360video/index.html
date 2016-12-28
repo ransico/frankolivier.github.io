@@ -23,7 +23,7 @@ canvas {
   
     <canvas id='webglcanvas' width='1440' height='720' swidth='2880' sheight='1440' ></canvas>
 
-    <video id='sourcevideo' controls autoplay loop style=" display:none" />
+    <video id='sourcevideo' controls autoplay loop />
       <source src="video.mp4" type="video/mp4">
       <source src="video.ogg" type="video/ogg">
     </video>
@@ -63,10 +63,8 @@ varying highp vec2 vTextureCoord;
 uniform sampler2D uSampler;
 
 void main(void) {
-  //gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-  gl_FragColor = vec4(vTextureCoord.x, vTextureCoord.y, 0.0, 1.0);
 
-  gl_FragColor = (texture2D(uSampler, vTextureCoord)); // + vec4(vTextureCoord.x, vTextureCoord.y, 0.0, 0.9)) / 2.0;
+  gl_FragColor = (texture2D(uSampler, vTextureCoord) + vec4(vTextureCoord.x, vTextureCoord.y, 0.0, 0.9)) / 2.0;
   
 }
 
