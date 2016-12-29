@@ -1,39 +1,49 @@
 ﻿<!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8"> 
-    <title>360&deg; WebVR Video Test</title> 
 
-    <link href="..\global.css" rel="stylesheet"> 
-    <script type="text/javascript" src="FakeWebVR.js"></script>
+<head>
+  <meta charset="UTF-8">
+  <title>360&deg; WebVR Video Test</title>
+
+  <link href="..\global.css" rel="stylesheet">
+  <script type="text/javascript" src="FakeWebVR.js"></script>
 </head>
 
 <style>
-canvas {
+canvas, video {
   width: calc(100% + 16px);
   margin-left: -8px;
   margin-right: -8px;
 }
+
+h2 {
+  margin-top: 1em;
+  margin-bottom: 0em;
+}
+
 </style>
 
-
 <body>
-    <h1>360&deg; WebVR Video Test</h1>
-    <button onclick="enterVR()" style="display:block">Enter VR</button>
-  
-    <canvas id='webglcanvas' width='1440' height='720' swidth='2880' sheight='1440' ></canvas>
+  <h1>360&deg; WebVR Video Test</h1>
+  This sample demonstrates how existing <a href='https://www.facebook.com/StarWars/videos/1030579940326940'>360&deg; video content</a>  can be converted to <a href='https://webvr.info'>WebVR</a>. If you browser supports WebVR, you can view the video in your
+  head-mounted display; otherwise it will be simulated below with prerecorded HMD data.
 
-    <video id='sourcevideo' controls autoplay loop />
-      <source src="video.mp4" type="video/mp4">
-      <source src="video.ogg" type="video/ogg">
-    </video>
+  <button onclick="enterVR()" style='display:block' id='startButton' >Start</button>
 
-    <div id="log"></div>
+<div id='demo' style='display:none'>
+  <h2>WebVR head-mounted display (left- and right-eye) output:</h2>
+  <canvas id='webglcanvas' width='1440' height='720' swidth='2880' sheight='1440'></canvas>
 
-	<script type="text/javascript" src="js.js"></script>
+  <h2>Source Video:</h2>
+  <video id='sourcevideo' controls autoplay loop muted />
+  <source src="video.mp4" type="video/mp4">
+  </video>
+
+</div>
+<script type="text/javascript" src="js.js"></script>
 
 
-	<!-- vertex shader -->
+<!-- vertex shader -->
 <script id="vertex-shader" type="x-shader/x-vertex">
 attribute vec3 aVertexPosition;
 attribute vec2 aTextureCoord;
@@ -46,10 +56,6 @@ varying highp vec2 vTextureCoord;
 void main(void) {
   gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
   vTextureCoord = aTextureCoord;
-
-  ////////////////
-  //gl_Position = uMVMatrix * vec4(aVertexPosition, 1.0);
-
 }
 
 </script>
@@ -61,11 +67,10 @@ void main(void) {
 varying highp vec2 vTextureCoord;
 
 uniform sampler2D uSampler;
+uniform highp float alpha;
 
 void main(void) {
-
-  gl_FragColor = (texture2D(uSampler, vTextureCoord) + vec4(vTextureCoord.x, vTextureCoord.y, 0.0, 0.9)) / 2.0;
-  
+  gl_FragColor = texture2D(uSampler, vTextureCoord) * alpha + vec4(vTextureCoord.x, vTextureCoord.y, 0.0, 1.0) * (1.0 - alpha);  
 }
 
 </script>
@@ -75,4 +80,5 @@ void main(void) {
 
 
 </body>
+
 </html>

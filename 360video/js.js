@@ -266,6 +266,7 @@ function init() {
 		gl.activeTexture(gl.TEXTURE0);
 		gl.bindTexture(gl.TEXTURE_2D, videoTexture);
 		gl.uniform1i(gl.getUniformLocation(program, 'uSampler'), 0);
+		gl.uniform1f(gl.getUniformLocation(program, 'alpha'), 0.5);
 
 	}
 
@@ -415,6 +416,10 @@ function getVRDisplays() {
 }
 
 function enterVR() {
+
+	document.getElementById('startButton').style.display = 'none';
+	document.getElementById('demo').style.display = '';
+
 
 	canvas = document.getElementById('webglcanvas');
 	//gl = canvas.getContext('experimental-webgl');
