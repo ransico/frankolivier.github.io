@@ -1,24 +1,43 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8"> 
-    <title>Skew</title> 
-</head>
-<body>
 
+<head>
+    <meta charset="UTF-8">
+    <title>Skew</title>
+
+    <link href="..\global.css" rel="stylesheet">
+
+</head>
+
+<style>
+canvas {
+    border: solid 1px grey;
+}
+</style>
+
+<body>
+    <h1>Image deskewing</h1>
+    <div>A simple WebGL utility for creating deskewed version of skewed photos</div>
+    
+    <div>
     <canvas id='inputcanvas' width='600' height='600'></canvas>
     <canvas id='webglcanvas' width='600' height='600'></canvas>
+    </div>
+    
+        <button id="openphoto1" onclick="OpenPhoto1()">Open a photo</button>
+        <span id="openphoto2" style="display:none">Pick a photo: <input type="file" id="files" name="files[]" /></span>
 
+    <button onclick='savePhoto()'>Save</button>
 
     <div id="log"></div>
 
     <script type="text/javascript" src="point.js"></script>
-	<script type="text/javascript" src="fourcorners.js"></script>
-	<script type="text/javascript" src="demo.js"></script>
+    <script type="text/javascript" src="fourcorners.js"></script>
+    <script type="text/javascript" src="demo.js"></script>
 
 
-	<!-- vertex shader -->
-<script id="2d-vertex-shader" type="x-shader/x-vertex">
+    <!-- vertex shader -->
+    <script id="2d-vertex-shader" type="x-shader/x-vertex">
 attribute vec2 a_texCoord;  // coordinates for the texture 
                             // (top left, top right, bottom left, bottom right)
 
@@ -50,9 +69,6 @@ varying vec2 v_texCoord;
 
 void main() {
 
-    //gl_FragColor = texture2D(u_image, v_texCoord);
-
-
     vec2 left = mix(bottomLeft, topLeft, v_texCoord.y);
     vec2 right = mix(bottomRight, topRight, v_texCoord.y);
 
@@ -60,11 +76,6 @@ void main() {
 
     vec4 color  = texture2D(u_image, position);
 
-    //float f = (color.r + color.g + color.b) / 3.0;
-
-    //f = floor(f * 25.0) / 25.0;
-
-    //gl_FragColor = vec4(f, f, f, 1.0);
     gl_FragColor = texture2D(u_image, position);
     
 }
@@ -73,4 +84,5 @@ void main() {
 
 
 </body>
+
 </html>

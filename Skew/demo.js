@@ -18,7 +18,6 @@ var renderer = new function () {
 
 
 	this.init = function () {
-		// Get a context
 		var canvas = document.getElementById("webglcanvas");
 
 		try {
@@ -41,13 +40,8 @@ var renderer = new function () {
 			this.pictureprogram = loadProgram(gl, vertexshader, fragmentshader);
 			gl.useProgram(this.pictureprogram);
 
-
-
-
-
 			// look up where the vertex data needs to go.
 			this.texCoordLocation = gl.getAttribLocation(this.pictureprogram, "a_texCoord");
-
 
 			// provide texture coordinates for the rectangle.
 			this.texCoordBuffer = gl.createBuffer();
@@ -56,20 +50,6 @@ var renderer = new function () {
 			var c = new Float32Array(12); //2 numbers per coord; three coords per triangle; 2 triagles per square; resolution * resolution squares
 
 			var i = 0;
-
-			/*
-						var ptlx = 0.055;
-						var ptly = 0.86;
-			
-						var ptrx = 0.79;
-						var ptry = 0.92;
-			
-						var pbrx = 0.85;
-						var pbry = 0.26;
-			
-						var pblx = 0.15;
-						var pbly = 0.1;
-			*/
 
 			var ptlx = 0;
 			var ptly = 1;
@@ -83,13 +63,13 @@ var renderer = new function () {
 			var pblx = 0;
 			var pbly = 0;
 
-			c[i++] = pblx; //
+			c[i++] = pblx;
 			c[i++] = pbly;
 
-			c[i++] = pbrx; //
+			c[i++] = pbrx;
 			c[i++] = pbry;
 
-			c[i++] = ptlx; //
+			c[i++] = ptlx;
 			c[i++] = ptly;
 
 			c[i++] = pbrx;
@@ -98,7 +78,7 @@ var renderer = new function () {
 			c[i++] = ptlx;
 			c[i++] = ptly;
 
-			c[i++] = ptrx; //
+			c[i++] = ptrx;
 			c[i++] = ptry;
 
 			gl.bufferData(gl.ARRAY_BUFFER, c, gl.STATIC_DRAW);
@@ -118,25 +98,7 @@ var renderer = new function () {
 			this.pictureprogram.bottomRight = gl.getUniformLocation(this.pictureprogram, "bottomRight");
 			this.pictureprogram.bottomLeft = gl.getUniformLocation(this.pictureprogram, "bottomLeft");
 
-			/*
-						
-						
-			
-						
-			*/
-			/*
-						//var topLeft = new Point(0,1);
-						var topLeft = new Point(0.06, 0.85);
-			
-						//var topRight = new Point(1,1);
-						var topRight = new Point(0.79, 0.92);
-			
-						//var bottomRight = new Point(1,0);
-						var bottomRight = new Point(0.84,0.26);
-			
-						//var bottomLeft = new Point(0,0);
-						var bottomLeft = new Point(0.15,0.1);
-			*/
+
 			//var topLeft = new Point(0,1);
 			var topLeft = new Point(0.095, 1);
 
@@ -250,8 +212,6 @@ var renderer = new function () {
 
 
 	this.updateCorners = function (corners) {
-		//console.log("! " + corners.topLeft.x + " " + corners.topLeft.y + " " + corners.topRight.x + " " + corners.topRight.y);
-
 		this.gl.uniform2f(this.pictureprogram.topLeft, corners.topLeft.x, corners.topLeft.y);
 		this.gl.uniform2f(this.pictureprogram.topRight, corners.topRight.x, corners.topRight.y);
 		this.gl.uniform2f(this.pictureprogram.bottomRight, corners.bottomRight.x, corners.bottomRight.y);
@@ -306,7 +266,6 @@ var renderer = new function () {
 		gl.vertexAttribPointer(this.texCoordLocation, 2, gl.FLOAT, false, 0, 0);
 
 		gl.enableVertexAttribArray(this.texCoordLocation);
-
 
 		gl.drawArrays(gl.TRIANGLES, 0, 2 * 3); // Draw 2 triangles
 
@@ -419,7 +378,50 @@ function loadProgram(gl, vertexshader, fragmentshader) {
 	return program;
 };
 
+function savePhoto() {
+	var dataURL = document.getElementById("webglcanvas").toDataURL("image/png");
+
+	if (window.navigator.msSaveBlob) {
+		var blob = dataURLtoBlob(dataURL);
+		window.navigator.msSaveBlob(blob, 'warpedphoto.png');
+	}
+	else {
+		var link = document.createElement("a");
+		link.download = 'warpedphoto.jpg';
+		link.href = dataURL;
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+	}
+}
 
 
+function handleFileSelect(evt) {
+
+	document.getElementById("openphoto1").style.display = "inline";
+	document.getElementById("openphoto2").style.display = "none";
+
+	var files = evt.target.files; // FileList object
+
+	// files is a FileList of File objects. List some properties.
+	var file = files[0];
+
+	var reader = new FileReader();
+
+	// Closure to capture the file information.
+	reader.onload = function (e) {
+		renderer.loadImageX(this.result);
+	};
+
+	// Read in the image file as a data URL.
+
+	reader.readAsDataURL(file);
+}
+
+document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
 
+function OpenPhoto1() {
+	document.getElementById("openphoto1").style.display = "none";
+	document.getElementById("openphoto2").style.display = "inline";
+}
