@@ -3,8 +3,6 @@
 window.onload = main;	// Startup
 
 
-
-
 var renderer = new function () {
 
 	var gl;                 // Handle to the context
@@ -144,13 +142,14 @@ var renderer = new function () {
 	}
 
 	this.loadImageX = function (dataURL) {
-		var image = new Image();
 
-		image.onload = function () {
-			renderer.loadImage2(image);
+		this.inputImage = new Image();
+
+		this.inputImage.onload = function () {
+			renderer.loadImage2(this.inputImage);
 		}
 
-		image.src = dataURL;
+		this.inputImage.src = dataURL;
 	}
 
 	// bugbug todo break this up into setupinputimage and drawinputimage
@@ -233,7 +232,6 @@ var renderer = new function () {
 		this.ctx.lineTo(corners.topLeft.x * this.canvas.width, (1 - corners.topLeft.y) * this.canvas.height);
 		this.ctx.stroke();
 
-
 	}.bind(this)
 
 	this.render = function () {
@@ -274,6 +272,57 @@ var renderer = new function () {
 
 	}
 
+	this.savePhoto = function() {
+	var dataURL = document.getElementById("webglcanvas").toDataURL("image/png");
+
+	if (window.navigator.msSaveBlob) {
+		var blob = dataURLtoBlob(dataURL);
+		window.navigator.msSaveBlob(blob, 'warpedphoto.png');
+	}
+	else {
+		var link = document.createElement("a");
+		link.download = 'warpedphoto.jpg';
+		link.href = dataURL;
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+	}
+}
+
+
+this.handleFileSelect = function(evt) {
+
+	document.getElementById("openphoto1").style.display = "inline";
+	document.getElementById("openphoto2").style.display = "none";
+
+	var files = evt.target.files; // FileList object
+
+	// files is a FileList of File objects. List some properties.
+	var file = files[0];
+
+	var reader = new FileReader();
+
+	// Closure to capture the file information.
+	reader.onload = function (e) {
+		//alert("result === " + this.result);
+		renderer.loadImageX(this.result);
+	};
+
+	// Read in the image file as a data URL.
+
+	reader.readAsDataURL(file);
+
+	//alert("READER!");
+
+}
+
+document.getElementById('files').addEventListener('change', this.handleFileSelect, false);
+
+
+	this.openPhoto1 = function() {
+	document.getElementById("openphoto1").style.display = "none";
+	document.getElementById("openphoto2").style.display = "inline";
+}
 
 
 
@@ -378,50 +427,3 @@ function loadProgram(gl, vertexshader, fragmentshader) {
 	return program;
 };
 
-function savePhoto() {
-	var dataURL = document.getElementById("webglcanvas").toDataURL("image/png");
-
-	if (window.navigator.msSaveBlob) {
-		var blob = dataURLtoBlob(dataURL);
-		window.navigator.msSaveBlob(blob, 'warpedphoto.png');
-	}
-	else {
-		var link = document.createElement("a");
-		link.download = 'warpedphoto.jpg';
-		link.href = dataURL;
-		document.body.appendChild(link);
-		link.click();
-		document.body.removeChild(link);
-	}
-}
-
-
-function handleFileSelect(evt) {
-
-	document.getElementById("openphoto1").style.display = "inline";
-	document.getElementById("openphoto2").style.display = "none";
-
-	var files = evt.target.files; // FileList object
-
-	// files is a FileList of File objects. List some properties.
-	var file = files[0];
-
-	var reader = new FileReader();
-
-	// Closure to capture the file information.
-	reader.onload = function (e) {
-		renderer.loadImageX(this.result);
-	};
-
-	// Read in the image file as a data URL.
-
-	reader.readAsDataURL(file);
-}
-
-document.getElementById('files').addEventListener('change', handleFileSelect, false);
-
-
-function OpenPhoto1() {
-	document.getElementById("openphoto1").style.display = "none";
-	document.getElementById("openphoto2").style.display = "inline";
-}

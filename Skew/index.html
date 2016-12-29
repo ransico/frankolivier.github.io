@@ -24,10 +24,10 @@ canvas {
     <canvas id='webglcanvas' width='600' height='600'></canvas>
     </div>
     
-        <button id="openphoto1" onclick="OpenPhoto1()">Open a photo</button>
+        <button id="openphoto1" onclick="renderer.openPhoto1()">Open a photo</button>
         <span id="openphoto2" style="display:none">Pick a photo: <input type="file" id="files" name="files[]" /></span>
 
-    <button onclick='savePhoto()'>Save</button>
+    <button onclick='renderer.savePhoto()'>Save</button>
 
     <div id="log"></div>
 
