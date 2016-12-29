@@ -266,7 +266,7 @@ function init() {
 		gl.activeTexture(gl.TEXTURE0);
 		gl.bindTexture(gl.TEXTURE_2D, videoTexture);
 		gl.uniform1i(gl.getUniformLocation(program, 'uSampler'), 0);
-		gl.uniform1f(gl.getUniformLocation(program, 'alpha'), 0.5);
+		gl.uniform1f(gl.getUniformLocation(program, 'alpha'), 1);
 
 	}
 
@@ -442,3 +442,11 @@ function enterVR() {
 
 }
 
+function toggleCube() {
+	var alpha = 1.0;
+	
+	if (document.getElementById('cube').checked) alpha = 0.5;
+
+	gl.uniform1f(gl.getUniformLocation(program, 'alpha'), alpha);
+
+}

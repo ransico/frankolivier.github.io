@@ -16,7 +16,7 @@ canvas, video {
   margin-right: -8px;
 }
 
-h2 {
+h2, button {
   margin-top: 1em;
   margin-bottom: 0em;
 }
@@ -28,11 +28,12 @@ h2 {
   This sample demonstrates how existing <a href='https://www.facebook.com/StarWars/videos/1030579940326940'>360&deg; video content</a>  can be converted to <a href='https://webvr.info'>WebVR</a>. If you browser supports WebVR, you can view the video in your
   head-mounted display; otherwise it will be simulated below with prerecorded HMD data.
 
-  <button onclick="enterVR()" style='display:block' id='startButton' >Start</button>
+  <button onclick="enterVR()" style='display:block' id='startButton' >Start demo</button>
 
 <div id='demo' style='display:none'>
   <h2>WebVR head-mounted display (left- and right-eye) output:</h2>
   <canvas id='webglcanvas' width='1440' height='720' swidth='2880' sheight='1440'></canvas>
+  <label><input type='checkbox' id='cube' onchange="toggleCube()" />Show cube</label>
 
   <h2>Source Video:</h2>
   <video id='sourcevideo' controls autoplay loop muted />
