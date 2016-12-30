@@ -1003,10 +1003,6 @@ function loadProgram(gl, vertexshader, fragmentshader) {
 	return program;
 };
 
-function showDemoDetails() {
-	document.getElementById("DemoDetails").style.display = "block"; document.getElementById("showDemoDetails").style.display = "none";
-}
-
 function handleFileSelect(evt) {
 
 	document.getElementById("openphoto1").style.display = "inline";

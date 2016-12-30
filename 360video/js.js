@@ -397,20 +397,24 @@ function onVRFrame() {
 
 }
 
-
-
+function enableStartButton(){
+	document.getElementById('startButton').style.display = 'block';
+}
 
 function getVRDisplays() {
+
 	if (navigator.getVRDisplays) {
 		navigator.getVRDisplays().then(function (displays) {
 			if (displays.length > 0) {
 				vrDisplay = displays[0];
+				enableStartButton();
 			}
 		})
 	}
 	else {
 		// no VRDisplay, fake items
 		vrDisplay = FakeWebVR.getVRDisplay();
+		enableStartButton();
 	}
 
 }
