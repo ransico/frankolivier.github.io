@@ -9,14 +9,11 @@ var renderer = new function () {
 	var pictureprogram;     // Handle to GLSL program that draws a picture
 
 	this.texCoordLocation;	// BUGBUG?
-
-	this.drawCoordLocation;	// BUGBUG?
-
-	this.texCoordBuffer;
+	this.texCoordBuffer;	// BUGBUG?
 
 
 	this.init = function () {
-		var canvas = document.getElementById("webglcanvas");
+		var canvas = document.getElementById("outputcanvas");
 
 		try {
 			// use antialias:false to make lines more visible
@@ -117,31 +114,20 @@ var renderer = new function () {
 		}
 
 		catch (e) {
-			log('shader fail');
+			console.log('Shader failure');
 			return;
 		}
 
 
-		this.loadImage();
+		this.loadImage('photos/fo.jpg');
+
 	}
 
 	this.inputImage = "";
 	this.canvas = document.getElementById("inputcanvas");
 	this.ctx = this.canvas.getContext("2d");
 
-	this.loadImage = function () {
-
-		this.inputImage = new Image();
-
-		this.inputImage.onload = function () {
-			renderer.loadImage2(this.inputImage);
-		}
-
-		this.inputImage.src = "photos/fo.jpg";
-
-	}
-
-	this.loadImageX = function (dataURL) {
+	this.loadImage = function (dataURL) {
 
 		this.inputImage = new Image();
 
@@ -150,6 +136,9 @@ var renderer = new function () {
 		}
 
 		this.inputImage.src = dataURL;
+
+		// reset grippers to default? TODO
+		////TODO this.drawInputImage();
 	}
 
 	// bugbug todo break this up into setupinputimage and drawinputimage
@@ -176,6 +165,18 @@ var renderer = new function () {
 		}
 
 		this.ctx.drawImage(this.inputImage, 0, 0, this.inputImage.width, this.inputImage.height, x, y, xx, yy);
+
+		/*
+				this.ctx.beginPath();
+				this.ctx.strokeStyle = "rgb(100, 0, 0)";
+				this.ctx.setLineDash([5, 5]);
+				this.ctx.moveTo(corners.topLeft.x * this.canvas.width, (1 - corners.topLeft.y) * this.canvas.height);
+				this.ctx.lineTo(corners.topRight.x * this.canvas.width, (1 - corners.topRight.y) * this.canvas.height);
+				this.ctx.lineTo(corners.bottomRight.x * this.canvas.width, (1 - corners.bottomRight.y) * this.canvas.height);
+				this.ctx.lineTo(corners.bottomLeft.x * this.canvas.width, (1 - corners.bottomLeft.y) * this.canvas.height);
+				this.ctx.lineTo(corners.topLeft.x * this.canvas.width, (1 - corners.topLeft.y) * this.canvas.height);
+				this.ctx.stroke();
+		*/
 
 	}
 
@@ -209,7 +210,6 @@ var renderer = new function () {
 	this.renderWidth = 1;
 	this.renderHeight = 1;
 
-
 	this.updateCorners = function (corners) {
 		this.gl.uniform2f(this.pictureprogram.topLeft, corners.topLeft.x, corners.topLeft.y);
 		this.gl.uniform2f(this.pictureprogram.topRight, corners.topRight.x, corners.topRight.y);
@@ -222,15 +222,18 @@ var renderer = new function () {
 		this.renderHeight = (corners.topLeft.distanceFrom(corners.bottomLeft) + corners.topRight.distanceFrom(corners.bottomRight)) / 2;
 
 		this.drawInputImage();
-		this.ctx.beginPath();
-		this.ctx.strokeStyle = "rgb(100, 0, 0)";
-		this.ctx.setLineDash([5, 5]);
-		this.ctx.moveTo(corners.topLeft.x * this.canvas.width, (1 - corners.topLeft.y) * this.canvas.height);
-		this.ctx.lineTo(corners.topRight.x * this.canvas.width, (1 - corners.topRight.y) * this.canvas.height);
-		this.ctx.lineTo(corners.bottomRight.x * this.canvas.width, (1 - corners.bottomRight.y) * this.canvas.height);
-		this.ctx.lineTo(corners.bottomLeft.x * this.canvas.width, (1 - corners.bottomLeft.y) * this.canvas.height);
-		this.ctx.lineTo(corners.topLeft.x * this.canvas.width, (1 - corners.topLeft.y) * this.canvas.height);
-		this.ctx.stroke();
+
+		/*
+				this.ctx.beginPath();
+				this.ctx.strokeStyle = "rgb(100, 0, 0)";
+				this.ctx.setLineDash([5, 5]);
+				this.ctx.moveTo(corners.topLeft.x * this.canvas.width, (1 - corners.topLeft.y) * this.canvas.height);
+				this.ctx.lineTo(corners.topRight.x * this.canvas.width, (1 - corners.topRight.y) * this.canvas.height);
+				this.ctx.lineTo(corners.bottomRight.x * this.canvas.width, (1 - corners.bottomRight.y) * this.canvas.height);
+				this.ctx.lineTo(corners.bottomLeft.x * this.canvas.width, (1 - corners.bottomLeft.y) * this.canvas.height);
+				this.ctx.lineTo(corners.topLeft.x * this.canvas.width, (1 - corners.topLeft.y) * this.canvas.height);
+				this.ctx.stroke();
+		*/
 
 	}.bind(this)
 
@@ -243,86 +246,75 @@ var renderer = new function () {
 
 		var program;
 
-		// TODO drawElements would be more efficient here
-
 
 		program = this.pictureprogram;
 
-		// Set the viewport we shoudl draw into
-
+		// Constrain the viewport to draw into
 		var middleX = gl.viewportWidth / 2;
 		var middleY = gl.viewportHeight / 2;
 		var offsetX = (this.renderWidth * gl.viewportWidth);
 		var offsetY = (this.renderHeight * gl.viewportHeight);
-
 		gl.viewport(middleX - offsetX / 2, middleY - offsetY / 2, offsetX, offsetY);
 
 		gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer);
-
 		gl.useProgram(this.pictureprogram);
-
 		gl.vertexAttribPointer(this.texCoordLocation, 2, gl.FLOAT, false, 0, 0);
-
 		gl.enableVertexAttribArray(this.texCoordLocation);
 
 		gl.drawArrays(gl.TRIANGLES, 0, 2 * 3); // Draw 2 triangles
+	}
+
+	this.savePhoto = function () {
+		var dataURL = document.getElementById("outputcanvas").toDataURL("image/png");
+
+		if (window.navigator.msSaveBlob) {
+			var blob = dataURLtoBlob(dataURL);
+			window.navigator.msSaveBlob(blob, 'warpedphoto.png');
+		}
+		else {
+			var link = document.createElement("a");
+			link.download = 'warpedphoto.jpg';
+			link.href = dataURL;
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+		}
+	}
 
 
+	this.handleFileSelect = function (evt) {
 
+		document.getElementById("openphoto1").style.display = "inline";
+		document.getElementById("openphoto2").style.display = "none";
+
+		var files = evt.target.files; // FileList object
+
+		// files is a FileList of File objects. List some properties.
+		var file = files[0];
+
+		var reader = new FileReader();
+
+		// Closure to capture the file information.
+		reader.onload = function (e) {
+			//alert("result === " + this.result);
+			renderer.loadImage(this.result);
+		};
+
+		// Read in the image file as a data URL.
+
+		reader.readAsDataURL(file);
+
+		//alert("READER!");
 
 	}
 
-	this.savePhoto = function() {
-	var dataURL = document.getElementById("webglcanvas").toDataURL("image/png");
+	document.getElementById('files').addEventListener('change', this.handleFileSelect, false);
 
-	if (window.navigator.msSaveBlob) {
-		var blob = dataURLtoBlob(dataURL);
-		window.navigator.msSaveBlob(blob, 'warpedphoto.png');
+
+	this.openPhoto1 = function () {
+		document.getElementById("openphoto1").style.display = "none";
+		document.getElementById("openphoto2").style.display = "inline";
 	}
-	else {
-		var link = document.createElement("a");
-		link.download = 'warpedphoto.jpg';
-		link.href = dataURL;
-		document.body.appendChild(link);
-		link.click();
-		document.body.removeChild(link);
-	}
-}
-
-
-this.handleFileSelect = function(evt) {
-
-	document.getElementById("openphoto1").style.display = "inline";
-	document.getElementById("openphoto2").style.display = "none";
-
-	var files = evt.target.files; // FileList object
-
-	// files is a FileList of File objects. List some properties.
-	var file = files[0];
-
-	var reader = new FileReader();
-
-	// Closure to capture the file information.
-	reader.onload = function (e) {
-		//alert("result === " + this.result);
-		renderer.loadImageX(this.result);
-	};
-
-	// Read in the image file as a data URL.
-
-	reader.readAsDataURL(file);
-
-	//alert("READER!");
-
-}
-
-document.getElementById('files').addEventListener('change', this.handleFileSelect, false);
-
-
-	this.openPhoto1 = function() {
-	document.getElementById("openphoto1").style.display = "none";
-	document.getElementById("openphoto2").style.display = "inline";
-}
 
 
 
@@ -339,34 +331,9 @@ document.getElementById('files').addEventListener('change', this.handleFileSelec
 function main() {
 	renderer.init();
 	cornerUI.init(document.getElementById('inputcanvas'), renderer.updateCorners);
-
-
-	//init2();
-
 }
 
 
-
-
-
-function setVec2(id, a, b) {
-	gl.uniform2f(gl.getUniformLocation(program, id), a, b);
-}
-
-
-
-
-// Adds a string to the log in the web page
-function log(result) {
-	var resultDiv = document.getElementById("log");
-	resultDiv.innerHTML += result + "<br />";
-}
-
-// Adds a string to the log in the web page; overwrites everything in the log with the new string
-function logi(result) {
-	var resultDiv = document.getElementById('log');
-	resultDiv.innerHTML = result;
-}
 
 
 // Loads a shader from a script tag
