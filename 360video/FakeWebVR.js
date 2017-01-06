@@ -1,16 +1,56 @@
-// Polyfill for the WebVR 1.1 API
+// Shim for the WebVR 1.1 API
 // https://w3c.github.io/webvr/
 
-if (typeof VRDisplay === 'undefined') {
+// Polyfills the WebVR API if the browser doesn't support it
+// Also emulated a HMD with fake data (if the browser doesn't support WebVR, or if WebVR is supported, and no HMD is attached)
 
+//if (typeof VRDisplay === 'undefined') {
+
+if ('getVRDisplays' in navigator) __getVRDisplays = navigator.getVRDisplays();
+
+if ('VRFrameData' in window) __VRFrameData = window.VRFrameData;
+if ('VRDisplay' in window) __VRDisplay = window.VRDisplay;
+
+//delete navigator.getVRDisplays;
+
+function logFunction(name)
+{
+    console.log('>>> ' + name);
+}
+
+
+navigator.getVRDisplays = function()
+{
+    logFunction('navigator.getVRDisplays');
+    ///if (__getVRDisplays != null) return __getVRDisplays; //TODO log returned data
+
+    //return __getVRDisplays;
+    
+    return new Promise(function (resolve, reject) {
+        var displays = new Array;
+        displays.push(new FakeVRDisplay);
+        resolve(displays);
+    });
+}
     var VRFrameData = function () {
+        logFunction('VRFrameData');
+
+        /*
+        if (typeof __VRFrameData === 'undefined')
+        {
+        
+        }
+        */
+
+        //TODO Log data from real API
+
         this.leftProjectionMatrix = [0.757, 0.000, 0.000, 0.000, 0.000, 0.681, 0.000, 0.000, -0.056, -0.002, -1.000, -1.000, 0.000, 0.000, -0.020, 0.000];
         this.leftViewMatrix = [0.938, -0.191, -0.288, 0.000, 0.215, 0.975, 0.052, 0.000, 0.271, -0.111, 0.956, 0.000, 0.667, -0.028, -0.361, 1.000];
         this.rightProjectionMatrix = [0.757, 0.000, 0.000, 0.000, 0.000, 0.682, 0.000, 0.000, 0.056, 0.005, -1.000, -1.000, 0.000, 0.000, -0.020, 0.000];
         this.rightViewMatrix = [0.938, -0.191, -0.288, 0.000, 0.215, 0.975, 0.052, 0.000, 0.271, -0.111, 0.956, 0.000, 0.603, -0.028, -0.361, 1.000];
     }
 
-    var VRDisplay = function () {
+    var FakeVRDisplay = function () {
 
 
         this.requestPresent = function () {
@@ -1254,4 +1294,5 @@ if (typeof VRDisplay === 'undefined') {
         }
     }
 
-}
+//}
+

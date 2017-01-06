@@ -1,6 +1,6 @@
-'use strict';
+﻿'use strict';
 
-window.onload = getVRDisplays;
+document.addEventListener( "DOMContentLoaded", getVRDisplays, false )
 
 var canvas;
 var gl;
@@ -23,23 +23,9 @@ var fpsData = "";
 
 var previousVideoUploadTime = null;
 
-var logstring = "";
 
-const numberOfFramesToSample = 1200;
-var frameTimes = [numberOfFramesToSample];
-
-// Adds a string to the log in the web page
-function log(result) {
-	var resultDiv = document.getElementById("log");
-	resultDiv.innerHTML += result + "<br />";
-}
-
-// Adds a string to the log in the web page; overwrites everything in the log with the new string
-function logi(result) {
-	var resultDiv = document.getElementById('log');
-	resultDiv.innerHTML = result;
-}
-
+//const numberOfFramesToSample = 1200;
+//var frameTimes = [numberOfFramesToSample];
 
 // Loads a shader from a script tag
 // [in] WebGL context
@@ -296,7 +282,7 @@ function onVRFrame() {
 
 	vrDisplay.requestAnimationFrame(onVRFrame);
 
-	gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+	gl.clear(gl.COLOR_BUFFER_BIT );
 
 
 	var uploaded = false;
@@ -368,7 +354,7 @@ function onVRFrame() {
 	frameCounter++;
 
 	//console.log(frameCounter + " " + numberOfFramesToSample + " " + t);
-
+/*
 	if (frameCounter <= numberOfFramesToSample) {
 
 		frameTimes[frameCounter] = t;
@@ -389,44 +375,54 @@ function onVRFrame() {
 		}
 
 
-		if (frameCounter == numberOfFramesToSample) log(logstring);
+		///if (frameCounter == numberOfFramesToSample) log(logstring);
 
 
 
 	}
-
+*/
 }
 
-function enableStartButton(){
-	document.getElementById('startButton').style.display = 'block';
+function vrReady() {
+	document.getElementById('vrReady').style.display = 'block';
 }
+
+
+function videoReady() {
+	document.getElementById('videoReady').style.display = 'block';
+}
+
+
 
 function getVRDisplays() {
-
 	if (navigator.getVRDisplays) {
 		navigator.getVRDisplays().then(function (displays) {
 			if (displays.length > 0) {
 				vrDisplay = displays[0];
-				enableStartButton();
+			}
+			else {
+				console.log("NO HMD FOUND");
 			}
 		})
 	}
 	else {
-		// no VRDisplay, fake items
-		vrDisplay = FakeWebVR.getVRDisplay();
-		enableStartButton();
+		console.log("WEBVR NOT SUPPORTED");
 	}
+
+	setTimeout(function() {
+		vrReady();
+	}, 3000);
+
+	//vrReady();
+
 
 }
 
 function enterVR() {
-
 	document.getElementById('startButton').style.display = 'none';
 	document.getElementById('demo').style.display = '';
 
-
 	canvas = document.getElementById('webglcanvas');
-	//gl = canvas.getContext('experimental-webgl');
 	gl = canvas.getContext("experimental-webgl", {
 		alpha: false,
 		preserveDrawingBuffer: false,
@@ -448,7 +444,7 @@ function enterVR() {
 
 function toggleCube() {
 	var alpha = 1.0;
-	
+
 	if (document.getElementById('cube').checked) alpha = 0.5;
 
 	gl.uniform1f(gl.getUniformLocation(program, 'alpha'), alpha);
