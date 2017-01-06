@@ -103,11 +103,12 @@ var cornerUI = new function() {
 			);
 			*/
 
+			/*
 			if (self.activePoint == self.topLeft) console.log("TOPLEFT");
 			if (self.activePoint == self.topRight) console.log("TOPRIGHT");
 			if (self.activePoint == self.bottomLeft) console.log("BOTTOMLEFT");
 			if (self.activePoint == self.bottomRight) console.log("BOTTOMRIGHT");
-			
+			*/
 
 			self.updateX(downpoint);
 

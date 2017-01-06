@@ -210,6 +210,11 @@ var renderer = new function () {
 	this.renderWidth = 1;
 	this.renderHeight = 1;
 
+	function ratio(input, rr)
+	{
+		return 1 - Math.pow(input, rr);
+	}
+
 	this.updateCorners = function (corners) {
 		this.gl.uniform2f(this.pictureprogram.topLeft, corners.topLeft.x, corners.topLeft.y);
 		this.gl.uniform2f(this.pictureprogram.topRight, corners.topRight.x, corners.topRight.y);
@@ -218,22 +223,62 @@ var renderer = new function () {
 		this.render();
 
 		// take the average of the two sides - this helps set the right aspect ratio for the output image
+		// BUBGUG improve this aspect ratio algorithm
 		this.renderWidth = (corners.topLeft.distanceFrom(corners.topRight) + corners.bottomLeft.distanceFrom(corners.bottomRight)) / 2;
 		this.renderHeight = (corners.topLeft.distanceFrom(corners.bottomLeft) + corners.topRight.distanceFrom(corners.bottomRight)) / 2;
 
+		var rr = corners.bottomLeft.distanceFrom(corners.bottomRight) / corners.topLeft.distanceFrom(corners.topRight);
+
+		console.log("Ratio = " + rr);
+
 		this.drawInputImage();
 
-		/*
-				this.ctx.beginPath();
-				this.ctx.strokeStyle = "rgb(100, 0, 0)";
-				this.ctx.setLineDash([5, 5]);
-				this.ctx.moveTo(corners.topLeft.x * this.canvas.width, (1 - corners.topLeft.y) * this.canvas.height);
-				this.ctx.lineTo(corners.topRight.x * this.canvas.width, (1 - corners.topRight.y) * this.canvas.height);
-				this.ctx.lineTo(corners.bottomRight.x * this.canvas.width, (1 - corners.bottomRight.y) * this.canvas.height);
-				this.ctx.lineTo(corners.bottomLeft.x * this.canvas.width, (1 - corners.bottomLeft.y) * this.canvas.height);
-				this.ctx.lineTo(corners.topLeft.x * this.canvas.width, (1 - corners.topLeft.y) * this.canvas.height);
-				this.ctx.stroke();
-		*/
+		//console.log(corners.topLeft.x, corners.topLeft.y, corners.topRight.x, corners.topRight.y, corners.bottomRight.x, corners.bottomRight.y, corners.bottomLeft.x, corners.bottomLeft.y);
+
+
+		this.ctx.strokeStyle = "rgb(255, 0, 0)";
+
+		this.ctx.beginPath();
+//		this.ctx.setLineDash([5, 5]);
+		this.ctx.moveTo(corners.topLeft.x * this.canvas.width, (1 - corners.topLeft.y) * this.canvas.height);
+		this.ctx.lineTo(corners.topRight.x * this.canvas.width, (1 - corners.topRight.y) * this.canvas.height);
+		this.ctx.lineTo(corners.bottomRight.x * this.canvas.width, (1 - corners.bottomRight.y) * this.canvas.height);
+		this.ctx.lineTo(corners.bottomLeft.x * this.canvas.width, (1 - corners.bottomLeft.y) * this.canvas.height);
+		this.ctx.lineTo(corners.topLeft.x * this.canvas.width, (1 - corners.topLeft.y) * this.canvas.height);
+		this.ctx.stroke();
+
+		this.ctx.beginPath();
+//		this.ctx.strokeStyle = "rgb(100, 0, 0)";
+//		this.ctx.setLineDash([5, 5]);
+		this.ctx.moveTo(corners.topLeft.x * this.canvas.width, (1 - corners.topLeft.y) * this.canvas.height);
+		this.ctx.lineTo(corners.bottomRight.x * this.canvas.width, (1 - corners.bottomRight.y) * this.canvas.height);
+		this.ctx.stroke();
+
+		this.ctx.beginPath();
+//		this.ctx.strokeStyle = "rgb(100, 0, 0)";
+//		this.ctx.setLineDash([5, 5]);
+		this.ctx.moveTo(corners.topRight.x * this.canvas.width, (1 - corners.topRight.y) * this.canvas.height);
+		this.ctx.lineTo(corners.bottomLeft.x * this.canvas.width, (1 - corners.bottomLeft.y) * this.canvas.height);
+		this.ctx.stroke();
+
+		var ldx = (corners.topLeft.x - corners.bottomLeft.x);
+		var ldy = (corners.topLeft.y - corners.bottomLeft.y);
+
+		var rdx = (corners.topRight.x - corners.bottomRight.x);
+		var rdy = (corners.topRight.y - corners.bottomRight.y);
+
+		for (var i = 0; i < 1; i = i + 0.25)
+		{
+			this.ctx.beginPath();
+			this.ctx.moveTo((corners.bottomLeft.x + ratio(i, rr) * ldx) * this.canvas.width, (1 - (corners.bottomLeft.y + ratio(i, rr) * ldy)) * this.canvas.height);
+			this.ctx.lineTo((corners.bottomRight.x + ratio(i, rr) * rdx) * this.canvas.width, (1 - (corners.bottomRight.y + ratio(i, rr) * rdy)) * this.canvas.height);
+			this.ctx.stroke();
+			
+		}		
+
+
+
+
 
 	}.bind(this)
 
