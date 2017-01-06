@@ -7,21 +7,22 @@
 //if (typeof VRDisplay === 'undefined') {
 
 if ('getVRDisplays' in navigator) __getVRDisplays = navigator.getVRDisplays();
-
 if ('VRFrameData' in window) __VRFrameData = window.VRFrameData;
 if ('VRDisplay' in window) __VRDisplay = window.VRDisplay;
 
-//delete navigator.getVRDisplays;
-
-function logFunction(name)
+var __logMessageCount = 0;
+function __log(name)
 {
-    console.log('>>> ' + name);
+    if (__logMessageCount < 100)
+    {
+        console.log('>>> ' + name);
+    }
+    __logMessageCount++;
 }
-
 
 navigator.getVRDisplays = function()
 {
-    logFunction('navigator.getVRDisplays');
+    __log('navigator.getVRDisplays');
     ///if (__getVRDisplays != null) return __getVRDisplays; //TODO log returned data
 
     //return __getVRDisplays;
@@ -33,7 +34,7 @@ navigator.getVRDisplays = function()
     });
 }
     var VRFrameData = function () {
-        logFunction('VRFrameData');
+        __log('VRFrameData');
 
         /*
         if (typeof __VRFrameData === 'undefined')
@@ -54,6 +55,7 @@ navigator.getVRDisplays = function()
 
 
         this.requestPresent = function () {
+            __log('VRDisplay.requestPresent');
             return new Promise(function (resolve, reject) {
                 resolve();
             });
@@ -61,6 +63,7 @@ navigator.getVRDisplays = function()
 
         // Do a 60fps callback based on the window, not head-mounted display
         this.requestAnimationFrame = function (callback) {
+            __log('VRDisplay.requestPresent');
             window.requestAnimationFrame(callback);
         }
 
@@ -1270,6 +1273,7 @@ navigator.getVRDisplays = function()
         this.viewMatrixDataIndex = 0;
 
         this.getFrameData = function (vrFrameData) {
+            __log('VRDisplay.getFrameData');
             vrFrameData.leftViewMatrix = this.viewMatrixData[this.viewMatrixDataIndex];
             vrFrameData.rightViewMatrix = this.viewMatrixData[this.viewMatrixDataIndex];
         
@@ -1278,11 +1282,11 @@ navigator.getVRDisplays = function()
         }
 
         this.submitFrame = function () {
-
+            __log('VRDisplay.submitFrame');
         }
 
         this.resetPose = function () {
-
+            __log('VRDisplay.resetPoses');
         }
 
     }
