@@ -411,7 +411,7 @@ function getVRDisplays() {
 
 	setTimeout(function() {
 		vrReady();
-	}, 3000);
+	}, 1100);
 
 	//vrReady();
 
