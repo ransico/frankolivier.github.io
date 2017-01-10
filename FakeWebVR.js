@@ -139,8 +139,8 @@ if (typeof VRDisplay === 'undefined') {
         this.requestAnimationFrame = function (callback) {
             __log('VRDisplay.requestPresent');
 
-            __previewContext.drawImage(__inputCanvas, 0, 0);
-
+            if (__previewContext) __previewContext.drawImage(__inputCanvas, 0, 0);
+                        
             window.requestAnimationFrame(callback);
         }
 
