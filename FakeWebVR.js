@@ -10,6 +10,12 @@ if (typeof VRDisplay === 'undefined') {
     if ('VRFrameData' in window) __VRFrameData = window.VRFrameData;
     if ('VRDisplay' in window) __VRDisplay = window.VRDisplay;
 
+    var __previewWindow;
+    var __previewCanvas;
+    var __previewContext;
+
+    var __inputCanvas;
+
     var __logMessageCount = 0;
     function __log(name) {
         if (__logMessageCount < 100) {
@@ -111,8 +117,19 @@ if (typeof VRDisplay === 'undefined') {
         addProperty(this, 'isPresenting', false);
         addProperty(this, 'layers', null);
 
-        this.requestPresent = function () {
+        this.requestPresent = function ( layers ) {
             __log('VRDisplay.requestPresent');
+
+            __inputCanvas = layers[0].source; ///TODO verify
+
+            __previewWindow = window.open("", "MsgWindow", "width=1200,height=600"); //TODO right size
+            __previewWindow.document.write("<canvas id='previewcanvas' width=1200 height=600>");
+            
+            __previewCanvas = __previewWindow.document.getElementById('previewcanvas'); //TODO don't use id?
+
+            //__previewCanvas = document.getElementById('testcanvas'); //TODO don't use id?
+            __previewContext = __previewCanvas.getContext('2d');
+
             return new Promise(function (resolve, reject) {
                 resolve();
             });
@@ -121,6 +138,9 @@ if (typeof VRDisplay === 'undefined') {
         // Do a 60fps callback based on the window, not head-mounted display
         this.requestAnimationFrame = function (callback) {
             __log('VRDisplay.requestPresent');
+
+            __previewContext.drawImage(__inputCanvas, 0, 0);
+
             window.requestAnimationFrame(callback);
         }
 

@@ -315,7 +315,7 @@ function enterVR() {
 	canvas = document.getElementById('webglcanvas');
 	gl = canvas.getContext("experimental-webgl", {
 		alpha: false,
-		preserveDrawingBuffer: false,
+		preserveDrawingBuffer: true,
 		depth: false,
 		stencil: false,
 		antialias: false,
