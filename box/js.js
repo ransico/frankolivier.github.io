@@ -98,6 +98,16 @@ function getBuffer(data, shaderName, itemSize) {
 
 function init() {
 
+	console.log
+
+	//set canvas to correct size
+	var leftEye = vrDisplay.getEyeParameters("left");
+	var rightEye = vrDisplay.getEyeParameters("right");
+
+	canvas.width = Math.max(leftEye.renderWidth, rightEye.renderWidth) * 2;
+	canvas.height = Math.max(leftEye.renderHeight, rightEye.renderHeight);
+
+
 	gl.viewport(0, 0, canvas.width, canvas.height);
 
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
