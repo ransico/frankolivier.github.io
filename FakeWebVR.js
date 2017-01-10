@@ -67,7 +67,7 @@ if (typeof VRDisplay === 'undefined') {
 
     var VRStageParameters = function () {
 
-        addProperty(this, 'sittingToStandingTransform', [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+        addProperty(this, 'sittingToStandingTransform', new Float32Array([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]));
         addProperty(this, 'sizeX', 6);
         addProperty(this, 'sizeZ', 6);
 
