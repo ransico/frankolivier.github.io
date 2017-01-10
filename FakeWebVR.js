@@ -1342,6 +1342,12 @@ var VRDisplay = function () {
         __log('VRDisplay.submitFrame');
     }
 
+
+    this.getPose = function () {
+        __log('VRDisplay.getPose');
+        return new VRPose();
+    }
+
     this.resetPose = function () {
         __log('VRDisplay.resetPose');
     }
@@ -1357,7 +1363,7 @@ var VRDisplay = function () {
     //todo don't use a new object on each call 
     addProperty(this, 'stageParameters', new VRStageParameters());
     addProperty(this, 'capabilities', new VRDisplayCapabilities());
-    addProperty(this, 'pose', new VRPose());
+
 
 /*
     this.stageParameters = function () {
