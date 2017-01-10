@@ -92,6 +92,15 @@ var VRPose = function () { //TODO Fill
     addProperty(this, 'angularAcceleration', null);   
 }
 
+var VREyeParameters = function () {
+  //TODO readonly attribute Float32Array offset;
+
+  //TODO[SameObject] readonly attribute VRFieldOfView fieldOfView;
+
+  addProperty(this, 'renderWidth', 600);
+  addProperty(this, 'renderHeight', 600);
+};
+
 var VRDisplay = function () {
 
     addProperty(this, 'depthFar', 1000);
@@ -1338,7 +1347,7 @@ var VRDisplay = function () {
     }
 
     this.getEyeParameters = function (whichEye) {
-        return ' '; //todo VREyeParameters
+        return new VREyeParameters(); //todo verify VREyeParameters
     }
 
     //this.capabilities = {//function () {

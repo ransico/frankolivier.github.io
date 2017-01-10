@@ -98,8 +98,6 @@ function getBuffer(data, shaderName, itemSize) {
 
 function init() {
 
-	console.log
-
 	//set canvas to correct size
 	var leftEye = vrDisplay.getEyeParameters("left");
 	var rightEye = vrDisplay.getEyeParameters("right");
