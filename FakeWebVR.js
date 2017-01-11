@@ -17,15 +17,15 @@ if (typeof VRDisplay === 'undefined') {
     var __inputCanvas;
 
     var __logMessageCount = 0;
-    function __log(name) {
+    function __log(message) {
         if (__logMessageCount < 100) {
-            console.log('>>> ' + name);
+            console.log(message);
         }
         __logMessageCount++;
     }
 
     navigator.getVRDisplays = function () {
-        __log('navigator.getVRDisplays');
+        __log('navigator.getVRDisplays()');
         ///if (__getVRDisplays != null) return __getVRDisplays; //TODO log returned data
 
         //return __getVRDisplays;
@@ -41,7 +41,7 @@ if (typeof VRDisplay === 'undefined') {
         Object.defineProperty(objectReference, name, {
             enumerable: true,
             get: function () {
-                __log(objectReference.constructor.name + '.' + name);
+                __log(objectReference.constructor.name + '.' + name + ' ' + value);
                 return value;
             }
         });
@@ -52,14 +52,7 @@ if (typeof VRDisplay === 'undefined') {
     }
 
     var VRFrameData = function () {
-        __log('VRFrameData');
-
-        /*
-        if (typeof __VRFrameData === 'undefined')
-        {
-        
-        }
-        */
+        __log('VRFrameData constructor');
 
         //TODO Log data from real API
 
@@ -88,12 +81,25 @@ if (typeof VRDisplay === 'undefined') {
         addProperty(this, 'maxLayers', 1);
     }
 
+    function random()
+    {
+        return Math.random();
+    }
+
+    function getRandomQuaternion() {
+        return new Float32Array([random(), random(), random(), 1]);
+    }
+
+    function getRandom3DVector() {
+        return new Float32Array([random(), random(), random()]);
+    }
+
     var VRPose = function () { //TODO Fill
         addProperty(this, 'timeStamp', null);
-        addProperty(this, 'position', null);
+        addProperty(this, 'position', getRandom3DVector());
         addProperty(this, 'linearVelocity', null);
         addProperty(this, 'linearAcceleration', null);
-        addProperty(this, 'orientation', null);
+        addProperty(this, 'orientation', getRandomQuaternion());
         addProperty(this, 'angularVelocity', null);
         addProperty(this, 'angularAcceleration', null);
     }
@@ -118,7 +124,7 @@ if (typeof VRDisplay === 'undefined') {
         addProperty(this, 'layers', null);
 
         this.requestPresent = function ( layers ) {
-            __log('VRDisplay.requestPresent');
+            __log('VRDisplay.requestPresent()');
 
             __inputCanvas = layers[0].source; ///TODO verify
 
@@ -137,7 +143,7 @@ if (typeof VRDisplay === 'undefined') {
 
         // Do a 60fps callback based on the window, not head-mounted display
         this.requestAnimationFrame = function (callback) {
-            __log('VRDisplay.requestPresent');
+            __log('VRDisplay.requestAnimationFrame()');
 
             if (__previewContext) __previewContext.drawImage(__inputCanvas, 0, 0);
                         
@@ -1363,9 +1369,10 @@ if (typeof VRDisplay === 'undefined') {
         }
 
 
+        //var __pose = new VRPose();
         this.getPose = function () {
-            __log('VRDisplay.getPose');
-            return new VRPose();
+            __log('VRDisplay.getPose()');
+            return new VRPose(); // __pose;
         }
 
         this.resetPose = function () {
